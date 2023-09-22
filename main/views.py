@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from .models import ToDoList
 from django.views.generic import CreateView, DeleteView
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
+@login_required
 def home(request):
     return render(request, 'main/home.html')
 
 
-class CreateToDoListView(CreateView):
+class CreateToDoListView(LoginRequiredMixin, CreateView):
     model = ToDoList
     fields = ['name']
     template_name = 'main/create_todo.html'
@@ -15,6 +18,7 @@ class CreateToDoListView(CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+@login_required
 def create_items(response, pk):
     todolist = ToDoList.objects.get(id=pk)
 
@@ -35,6 +39,6 @@ def create_items(response, pk):
     return render(response, 'main/create_items.html', {'todolist':todolist})
 
 
-class DeleteToDoListView(DeleteView):
+class DeleteToDoListView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = ToDoList
     success_url = '/'
