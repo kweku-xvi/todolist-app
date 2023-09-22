@@ -1,0 +1,61 @@
+{% extends 'main/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %} ToDoList {% endblock %}
+
+{% block header %}
+    <header class="site-header">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <span class="navbar-brand">ToDoList</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'home-page' %}">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'create-todolist' %}">Create Note</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#">Disabled</a>
+            </li>
+          </ul>
+          <a href="{% url 'profile' %}" class="mr-2"><img src="{{ user.profile.image.url }}" class="rounded-circle article-img" style="width: 40px;height: 40px;"></a>
+          <a class="btn btn-danger my-2 my-sm-0" href="{% url 'logout' %}">Log Out</a>
+        </div>
+    </nav>
+    </header>
+{% endblock %}
+
+{% block content %}
+    <h1>{{todolist.name}}</h1>
+    <form action="#" method="post">
+        {% csrf_token %}       
+            {% for item in todolist.item_set.all%}
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        {% if item.complete == True %}
+                            <input type="checkbox" value="clicked" name="c{{item.id}}" checked>
+                        {% else %}
+                            <input type="checkbox" value="clicked" name="c{{item.id}}">
+                        {% endif %}
+                    </div>
+                </div>
+                <input type="text" value="{{item.text}}" class="form-control">
+            </div>
+            {% endfor %}
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <button type="submit", name="newItem", value="newItem" class="btn btn-success">Add Item</button>
+            </div>
+            <input type="text", name="new">
+        </div>
+
+        <button type="submit", name="save", value="save" class="btn btn-success">Save</button>
+        <a href="{% url 'delete-todolist' todolist.id %}" class="btn btn-danger">Delete</a>
+    </form>
+{% endblock %}
